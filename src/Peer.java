@@ -44,11 +44,12 @@ public class Peer {
         new Thread(()->{
             while (true){
                 try {
-                    if (!(socketChannel.read(clientBuffer)>0)) break;
+                    if ((socketChannel.read(clientBuffer)>0))
+                        System.out.println("receive");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                System.out.println("receive");
+
                 clientBuffer.flip();
             }
         });
