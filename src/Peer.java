@@ -12,9 +12,11 @@ public class Peer {
     Selector selector ;
     ServerSocketChannel serverSocket ;
     ByteBuffer buffer;
+    ByteBuffer clientBuffer;
     Set<SocketChannel> set;
     TreeMap<String,SocketChannel> clientList;
     TreeMap<String,ArrayList<SocketChannel>> salonList;
+    TreeMap<String,Peer> peerList;
     Handler handler;
     ChatModel chatModel;
     private int port;
@@ -33,13 +35,14 @@ public class Peer {
 
     }
     public void connectToPeer (String ip, int port) throws IOException {
+        this.clientBuffer = ByteBuffer.allocate(512);
         SocketChannel socketChannel  = SocketChannel.open();
         clientList.put(ip,socketChannel);
         socketChannel.connect(new InetSocketAddress(ip, port));
-        while(true){
+       /* while(true){
             socketChannel.read(buffer);
             System.out.println("un message est venu");
-        }
+        } */
     }
 
     public void initPeerListening () throws IOException {
