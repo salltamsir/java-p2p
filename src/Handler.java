@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.TreeMap;
@@ -28,6 +29,8 @@ public class Handler {
                     return ;
                 }
                 clientList.put(assemblage(words,1),socketChannel);
+                String mess = "Bonjour";
+                socketChannel.write(byteBuffer);
                 break;
             case "MSG" :
                 if(socketChannel==null){

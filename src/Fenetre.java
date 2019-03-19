@@ -36,6 +36,7 @@ public class Fenetre extends JFrame {
         jTextField2.setPreferredSize(new Dimension(150,30));
         jTextField3.setFont(police);
         jTextField3.setPreferredSize(new Dimension(150,30));
+        jTextField3.setPreferredSize(new Dimension(150,30));
         b.addActionListener(new BoutonListener());
         top.add(label);
         top.add(jTextField);

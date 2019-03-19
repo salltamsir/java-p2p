@@ -26,6 +26,7 @@ public class Peer {
         this.ip=ip;
         this.port=port;
         buffer = ByteBuffer.allocate(256);
+        clientBuffer = ByteBuffer.allocate(256);
         set = new HashSet<>();
         clientList = new TreeMap<>();
         salonList = new TreeMap<>();
@@ -39,10 +40,19 @@ public class Peer {
         SocketChannel socketChannel  = SocketChannel.open();
         clientList.put(ip,socketChannel);
         socketChannel.connect(new InetSocketAddress(ip, port));
-       /* while(true){
-            socketChannel.read(buffer);
-            System.out.println("un message est venu");
-        } */
+
+        new Thread(()->{
+            while (true){
+                try {
+                    if (!(socketChannel.read(clientBuffer)>0)) break;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("receive");
+                clientBuffer.flip();
+            }
+        });
+
     }
 
     public void initPeerListening () throws IOException {
