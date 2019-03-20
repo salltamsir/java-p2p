@@ -32,6 +32,7 @@ public class ChatModel {
         }
         else{
             salon.add(socketChannel);
+            System.out.println(" a integre un salon");
         }
     }
     public void createRoom(TreeMap<String, ArrayList<SocketChannel>> salonList, SocketChannel socketChannel, String name){

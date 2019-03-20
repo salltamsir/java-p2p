@@ -43,11 +43,12 @@ public class Handler {
             case "CREATE" :
                 switch (words[1].toUpperCase()){
                     case "ROOM":
-                        if(salonList.get(words[2])==null){
+                        if(salonList.get(words[2])!=null){
                             System.out.println("Ce salon existe deja");
                             return ;
                         }
                         chatmodel.createRoom(salonList,socketChannel,words[2]);
+                        System.out.println("salon cree");
                         break;
                 }
                 break;
@@ -70,6 +71,9 @@ public class Handler {
             case "MSGROOM" :
                 chatmodel.sendRoomMessage(words[1],byteBuffer,salonList);
                 break;
+
+                default: for(int i=0; i<words.length;++i)
+                    System.out.println("message "+words[i]);
 
         }
     }

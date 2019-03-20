@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.text.NumberFormat;
 
 public class Fenetre extends JFrame {
@@ -14,9 +15,11 @@ public class Fenetre extends JFrame {
     private JTextField jTextField1 = new JTextField();
     private JTextField jTextField2 = new JTextField();
     private JTextField jTextField3 = new JTextField();
+    private JTextField jTextField4 = new JTextField();
     private JLabel label = new JLabel("Un JTextField");
     private JButton b = new JButton ("Thread Listen");
     private JButton b1 = new JButton ("Thread connect");
+    private JButton b2 = new JButton ("Send message");
 
     public Fenetre(){
         System.out.println("fenetre va souvrir");
@@ -36,15 +39,18 @@ public class Fenetre extends JFrame {
         jTextField2.setPreferredSize(new Dimension(150,30));
         jTextField3.setFont(police);
         jTextField3.setPreferredSize(new Dimension(150,30));
-        jTextField3.setPreferredSize(new Dimension(150,30));
+        jTextField4.setFont(police);
+        jTextField4.setPreferredSize(new Dimension(150,30));
         b.addActionListener(new BoutonListener());
         top.add(label);
         top.add(jTextField);
         top.add(jTextField1);
         top.add(jTextField2);
         top.add(jTextField3);
+        top.add(jTextField4);
         top.add(b);
         top.add(b1);
+        top.add(b2);
         b1.addActionListener(e -> {
             if (!(peer.equals(null))){
                 try {
@@ -52,6 +58,13 @@ public class Fenetre extends JFrame {
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
+            }
+        });
+        b2.addActionListener(e -> {
+            if (!(peer.equals(null))){
+                ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+                byteBuffer.put(jTextField4.getText().getBytes());
+                peer.sendMessage(byteBuffer);
             }
         });
 
@@ -67,7 +80,7 @@ public class Fenetre extends JFrame {
             System.out.println("Ip : "+ip);
 
             try {
-                 peer = new Peer (port,ip);
+                peer = new Peer (port,ip);
                 new ListeningThread(peer).start();
             } catch (IOException e1) {
                 e1.printStackTrace();

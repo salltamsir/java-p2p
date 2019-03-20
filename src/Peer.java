@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -17,10 +18,20 @@ public class Peer {
     TreeMap<String,SocketChannel> clientList;
     TreeMap<String,ArrayList<SocketChannel>> salonList;
     TreeMap<String,Peer> peerList;
+    ArrayList<SocketChannel> sendList = new ArrayList<>();
     Handler handler;
     ChatModel chatModel;
     private int port;
     private String  ip;
+
+    public void sendMessage(ByteBuffer byteBuffer){
+        System.out.println("the socket "+sendList.get(0));
+        try {
+            sendList.get(0).write(byteBuffer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public Peer (int port, String ip) throws IOException {
         this.ip=ip;
@@ -40,19 +51,24 @@ public class Peer {
         SocketChannel socketChannel  = SocketChannel.open();
         clientList.put(ip,socketChannel);
         socketChannel.connect(new InetSocketAddress(ip, port));
+        sendList.add(socketChannel);
 
         new Thread(()->{
+            ByteBuffer bb = ByteBuffer.allocate(1025);
             while (true){
                 try {
-                    if ((socketChannel.read(clientBuffer)>0))
-                        System.out.println("receive");
+                    if ((socketChannel.read(bb)>0)){
+                        bb.flip();
+                        System.out.println("receive "+new String(bb.array()));
+                    }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
                 clientBuffer.flip();
             }
-        });
+        }).start();
 
     }
 
@@ -87,6 +103,7 @@ public class Peer {
         }
     }
 
+
     private  void repeat(SelectionKey key) throws IOException {
 
         SocketChannel client = (SocketChannel) key.channel();
@@ -97,9 +114,9 @@ public class Peer {
             System.out.println("Deconnexion");
             return;
         }
-        client.read(buffer);
         buffer.flip();
         String action = new String(buffer.array()).trim();
+
 
         handler.input(Handler.decoupage (action),client,buffer);
 
@@ -107,6 +124,7 @@ public class Peer {
         if (new String(buffer.array()).trim().equals(POISON_PILL)) {
             client.close();
             System.out.println("Not accepting client messages anymore");
+            Set<SelectionKey> s = selector.keys();
         }
     }
 
@@ -119,7 +137,6 @@ public class Peer {
         set.add(client);
 
     }
-
     private  void register(Selector selector, ServerSocketChannel serverSocket, String name)
             throws IOException {
 

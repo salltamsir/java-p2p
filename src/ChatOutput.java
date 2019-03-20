@@ -22,6 +22,7 @@ public class ChatOutput implements ChatProtocol {
 
         salon.stream().forEach(x-> {
             try {
+                ByteBuffer b = ByteBuffer.wrap(new String("yes").getBytes());
                 x.write(byteBuffer);
                 byteBuffer.flip();
                 System.out.println("socket : "+x);
